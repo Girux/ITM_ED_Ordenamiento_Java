@@ -118,4 +118,32 @@ public class Arbol {
         return fila;
     }
 
+    public Documento buscar(String valor, int criterio) {
+        return buscarRecursivo(raiz, valor, criterio);
+    }
+
+    private Documento buscarRecursivo(Nodo nodo, String valor, int criterio) {
+        if (nodo == null) {
+            return null;
+        }
+
+        Documento actual = nodo.getDocumento();
+        String claveActual;
+
+        if (criterio == 0) {
+            claveActual = actual.getNombreCompleto();
+        } else {
+            claveActual = actual.getDocumento();
+        }
+
+        int comparacion = claveActual.compareToIgnoreCase(valor);
+
+        if (comparacion == 0) {
+            return actual;
+        } else if (comparacion > 0) {
+            return buscarRecursivo(nodo.izquierda, valor, criterio);
+        } else {
+            return buscarRecursivo(nodo.derecha, valor, criterio);
+        }
+    }
 }

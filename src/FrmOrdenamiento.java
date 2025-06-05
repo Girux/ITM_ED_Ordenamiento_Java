@@ -10,6 +10,11 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.WindowConstants;
 
+import java.awt.Color;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+
+import entidades.Documento;
 import servicios.Arbol;
 import servicios.ServicioDocumento;
 import servicios.Util;
@@ -30,6 +35,7 @@ public class FrmOrdenamiento extends JFrame {
     private JTextField txtBuscar;
 
     private JTable tblDocumentos;
+    private Arbol arbol;
 
     public FrmOrdenamiento() {
 
@@ -99,15 +105,37 @@ public class FrmOrdenamiento extends JFrame {
         String nombreArchivo = System.getProperty("user.dir")
                 + "/src/datos/Datos.csv";
 
-        //ServicioDocumento.desdeArchivo(nombreArchivo);
-        //ServicioDocumento.mostrar(tblDocumentos);
+        // ServicioDocumento.desdeArchivo(nombreArchivo);
+        // ServicioDocumento.mostrar(tblDocumentos);
 
-        Arbol arbol = new Arbol();
+        arbol = new Arbol();
         arbol.desdeArchivo(nombreArchivo);
-        //arbol.recorrerInOrden();
+        // arbol.recorrerInOrden();
         arbol.mostrar(tblDocumentos);
 
-        
+        //PlaceHolder
+        txtBuscar.setText("Ingrese Nombre Completo...");
+        txtBuscar.setForeground(Color.GRAY);
+
+        txtBuscar.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (txtBuscar.getText().equals("Ingrese Nombre Completo...")) {
+                    txtBuscar.setText("");
+                    txtBuscar.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (txtBuscar.getText().isEmpty()) {
+                    txtBuscar.setForeground(Color.GRAY);
+                    txtBuscar.setText("Ingrese Nombre Completo...");
+                }
+            }
+
+        });
+
     }
 
     private void btnOrdenarBurbujaClick(ActionEvent evt) {
@@ -137,7 +165,15 @@ public class FrmOrdenamiento extends JFrame {
     }
 
     private void btnBuscar(ActionEvent evt) {
-
+        String texto = txtBuscar.getText().trim();
+     
+        Documento encontrado = arbol.buscar(texto, cmbCriterio.getSelectedIndex());
+        if (encontrado != null) {
+            JOptionPane.showMessageDialog(null, "Documento encontrado:\n" +
+                    encontrado.getNombreCompleto() + "\n" +
+                    "Tipo de Documento: " + encontrado.getDocumento());
+        } else {
+            JOptionPane.showMessageDialog(null, "Documento no encontrado.");
+        }
     }
-
 }
